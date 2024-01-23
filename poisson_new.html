@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Биномиальное и Пуассоновское распределение</title>
+    <link rel="stylesheet" href="style15.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Распределение Пуассона</h1>
+    </header>
+    <div class="container">
+        <section id="simulation-section">
+
+            <div role="button" onclick="toggleExampleText()" style="color: rgb(139, 139, 255);">Пример задачи</div>
+            <div id="example-text" style="display: none;">
+                Давайте рассмотрим пример, когда мы с вами 12 раз бросаем 2 кости. И пусть наша СВ \(X\) – это количество появления двойной шестерки, 
+                то есть и на одной кости выпала 6, и на другой. То есть в данном случае \(n\)=12, \(p\)=1/36 = 0,0278. Введя в наш симулятор эти значения параметров Биномиального
+                распределения \(n\) и \(p\), \(λ\) автоматически примет значение вычесленое по формуле \(λ\)= \(n\)\(\cdot\)\(p\), симмулятор расчитает вероятности по формулам Биномиального и 
+                Пуассоновоского распределения и выведит их в таблице и на графике для визульного сравнения двух распределении. 
+            </div>
+
+            <form id="combined-form">
+                <label for="n">Количество опытов (<var>n </var>): </label>
+                <p></p>
+                <input type="number" id="n" name="n" required min="1">
+                <p></p>
+                <label for="p">Вероятность успеха в каждом опыте (<var>p</var>): </label>
+                <p></p>
+                <input type="number" step="0.01" id="p" name="p" required>
+                <p></p>
+                <label for="lambda">Параметр λ (rate): </label>
+                <p></p>
+                <input style="border: 0px solid #878787" type="number" step="0.01" id="lambda" name="lambda" min="0" readonly>
+                <p></p>
+
+                <button type="button" onclick="startSimulation()">Старт</button>
+            </form>
+
+            <canvas id="combined-chart"></canvas>
+
+            <div id="output" style="display: none;">
+                <h2>Численные характеристики:</h2>
+                <p></p>
+                <p>По формулам распределения Пуассона</p>
+                <p id="output-mean-poisson"> Математическое ожидание (Mean): \(M(X)\) = <span class="math" id="meanPoisson"></span></p>
+                <p id="output-variance-poisson"> Дисперсия (Variance): \(D(X)\) = <span class="math" id="variancePoisson"></span></p>
+                <p></p>
+                <p>По формулам биномиального распределения</p>
+                <p id="output-mean"> Математическое ожидание (Mean ): \(M(X)\) = <span class="math" id="mean"></span></p>
+                <p id="output-variance"> Дисперсия (Variance): \(D(X)\) = <span class="math" id="variance"></span></p>
+            </div>
+            
+
+            <div role="button" onclick="toggleExplanation()" style="color: rgb(139, 139, 255)">Объяснение</div>
+            <div id="explanation" style="display: none;">
+                Распределение Пуассона является приближением биномиального распределения. Давайте разберем этот 
+                вопрос подробнее. Пусть СВ имеет биномиальное распределение с параметрами \(n\) и \(p\). То есть проводится 
+                \(n\) независимых опытов с вероятностью успеха в каждом \(p\), причем \(p\) стремится к 0, когда \(n\) стремится к 
+                бесконечности, но таким образом, что произведение \(n\) на \(p\) стремится к некоторой константе, которую мы 
+                обозначим \(λ\). В этом случае вероятность того, что случайная величина примет некоторое значение \(k\), 
+                стремится к соответствующей вероятности распределения Пуассона с параметром \(λ\). На практике это 
+                приближение применяют, когда вероятность успеха достаточно мала, а количество опытов достаточно велико.
+
+                <p>Вероятность биномиального распределения, то есть вероятность события, 
+                что случайная величина \(X\) примет значение \(k\) вычисляется по формуле:</p>
+
+                \[ P(X = k) = \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k},\]
+                <p>где:</p>
+                <ul>
+                    <li> \( \binom{n}{k} \) - число сочетаний \(n\) по \(k\),</li>
+                    <li> \( p \) - вероятность успеха в каждом опыте,</li>
+                    <li> \( (1 - p) \) - вероятность неудачи в каждом опыте.</li>
+                </ul>
+                
+                \[ \binom{n}{k} = \frac{n!}{k! \cdot (n - k)!} ,\]
+                
+                \[ k! = 1 \cdot 2 \cdot 3 \cdot ... \cdot k. \]
+
+                <p>Вероятность пуассоновского распределения, то есть вероятность события, что случайная величина \(X\) примет значение \(k\) вычисляется следующим образом:</p>
+
+                \[P(X=k) = \frac{e^(-λ) \cdot λ^k}{k!},\]
+
+                <p>где:</p>
+
+                <ul>
+                    <li> \( e \) - экспонента,</li>
+                    <li> \( λ \) - параметр распределения, равный среднему числу событий в интервале времени или пространстве,</li>               
+
+                </ul> 
+
+                <p>Математическое ожидание (среднее):</p>
+                
+                <p>В пуассоновском распределении математическое ожидание \(μ\) равно параметру распределения \(λ\) (интенсивности событий). То есть:</p>
+                    
+                \[ μ = λ \]
+                    
+              
+                <p>Дисперсия:</p>
+                
+                <p>Дисперсия (\(σ\)^2) в пуассоновском распределении также равна параметру \(λ\):</p>
+                    
+                \[ σ^2 = λ \]
+                    
+                <p>Эти формулы основываются на особенностях пуассоновского распределения, где математическое ожидание и дисперсия всегда равны \(λ\). Это происходит из основного предположения распределения, что события происходят независимо друг от друга, и интенсивность событий (\(λ\)) остается постоянной.
+                В контексте пуассоновского распределения \(λ\) также интерпретируется как среднее количество событий за фиксированный интервал времени или пространства, и поэтому оно отражает и математическое ожидание, и дисперсию этого распределения.</p>
+                
+            </div>
+        </section>
+
+        <section id="distribution-table-section" style=" width: 40%; display: none;">
+            <div class="distribution-table-container">
+                <label for="decimal-places">Количество знаков после запятой:</label>
+                <input class="decimal" type="number" id="decimal-places" min="0" onchange="updateDecimalPlaces()">
+
+                <div id="distribution-table">
+                    <!-- Таблица вероятностей -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Значение (x)</th>
+                                <th>Биномиальное P(X)</th>
+                                <th>Пуассоновское P(X)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="distribution-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+    <script>
+        let animationStarted = false;
+        let myCombinedChart;
+
+        function toggleExampleText() {
+            const exampleText = document.getElementById('example-text');
+            exampleText.style.display = (exampleText.style.display === 'none' || exampleText.style.display === '') ? 'block' : 'none';
+        }
+
+        function toggleExplanation() {
+            const explanation = document.getElementById('explanation');
+            explanation.style.display = (explanation.style.display === 'none' || explanation.style.display === '') ? 'block' : 'none';
+        }
+
+        function startSimulation() {
+            const nInput = document.getElementById('n');
+            const pInput = document.getElementById('p');
+            const lambdaInput = document.getElementById('lambda');
+            const outputContainer = document.getElementById('output');
+            const distributionTableSection = document.getElementById('distribution-table-section');
+
+            const n = parseInt(nInput.value);
+            const p = parseFloat(pInput.value);
+
+            if (isNaN(n) || isNaN(p) || n <= 0 || p < 0 || p > 1) {
+                alert('Пожалуйста, введите корректные значения. Please enter valid values.');
+                return;
+            }
+
+            const lambda = n * p;
+            lambdaInput.value = lambda.toFixed(2);
+
+            const binomialData = calculateBinomialDistribution(n, p);
+            const poissonData = generatePoissonData(lambda, n);
+
+            // Clear existing chart
+            if (myCombinedChart) {
+                myCombinedChart.destroy();
+            }
+
+            updateCombinedChart(binomialData, poissonData);
+
+            outputContainer.style.display = 'block';
+            distributionTableSection.style.display = 'block';
+
+            const mean = calculateMean(binomialData);
+            const variance = calculateVariance(binomialData, mean);
+            const poissonMean = lambda;
+            const poissonVariance = lambda;
+            updateCharacteristics(mean, variance, poissonMean, poissonVariance);
+
+            updateDistributionTable(binomialData, poissonData);
+        }
+
+        function calculateBinomialDistribution(n, p) {
+            const data = [];
+            let mean = 0;
+            let variance = 0;
+            const decimalPlaces = getDecimalPlaces();
+
+            for (let i = 0; i <= n; i++) {
+                const probability = binomialProbability(i, n, p);
+                data.push({
+                    x: i,
+                    y: probability
+                });
+
+                mean += i * probability;
+                variance += i * i * probability;
+            }
+
+            variance -= mean * mean;
+
+            return data;
+        }
+
+        function generatePoissonData(lambda, n) {
+            const data = [];
+            const decimalPlaces = getDecimalPlaces();
+
+            for (let i = 0; i <= n; i++) {
+                const probability = poissonProbability(i, lambda);
+                data.push({
+                    x: i,
+                    y: probability
+                });
+            }
+
+            return data;
+        }
+
+        function updateCombinedChart(binomialData, poissonData) {
+            const ctx = document.getElementById('combined-chart').getContext('2d');
+
+            myCombinedChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: Math.max(binomialData.length, poissonData.length) }, (_, i) => i.toString()),
+                    datasets: [{
+                        label: 'Binomial Probability',
+                        data: binomialData.map(entry => entry.y),
+                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: 'Poisson Probability',
+                        data: poissonData.map(entry => entry.y),
+                        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+                        borderColor: 'rgba(255, 0, 0, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            max: Math.max(binomialData.length, poissonData.length) - 1
+                        },
+                        y: {
+                            min: 0,
+                            max: Math.max(Math.max(...binomialData.map(entry => entry.y)), Math.max(...poissonData.map(entry => entry.y))) + 0.01,
+                            ticks: {
+                                stepSize: 1 / Math.pow(10, getDecimalPlaces()),
+                                beginAtZero: true
+                            }
+                        }
+                    },
+
+                }
+            });
+        }
+
+        function binomialProbability(x, n, p) {
+            const q = 1 - p;
+            let result = binomialCoefficient(n, x) * (p ** x) * (q ** (n - x));
+            return result;
+        }
+
+        function binomialCoefficient(n, x) {
+            return factorial(n) / (factorial(x) * factorial(n - x));
+        }
+
+        function poissonProbability(x, lambda) {
+            const ePower = Math.exp(-lambda);
+            const numerator = lambda ** x;
+            const denominator = factorial(x);
+            return (numerator * ePower) / denominator;
+        }
+
+        function factorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            } else {
+                return n * factorial(n - 1);
+            }
+        }
+
+        function getDecimalPlaces() {
+            const decimalPlacesInput = document.getElementById('decimal-places');
+            return parseInt(decimalPlacesInput.value) || 4;
+        }
+
+        function calculateMean(binomialData) {
+            let mean = 0;
+            for (let i = 0; i < binomialData.length; i++) {
+                mean += binomialData[i].x * binomialData[i].y;
+            }
+            return mean;
+        }
+
+        function calculateVariance(binomialData, mean) {
+            let variance = 0;
+            for (let i = 0; i < binomialData.length; i++) {
+                variance += (binomialData[i].x - mean) ** 2 * binomialData[i].y;
+            }
+            return variance;
+        }
+
+        function updateCharacteristics(mean, variance, meanPoisson, variancePoisson) {
+            const meanOutput = document.getElementById('mean');
+            const varianceOutput = document.getElementById('variance');
+            const meanPoissonOutput = document.getElementById('meanPoisson');
+            const variancePoissonOutput = document.getElementById('variancePoisson');
+
+            meanOutput.textContent = mean.toFixed(getDecimalPlaces());
+            varianceOutput.textContent = variance.toFixed(getDecimalPlaces());
+            meanPoissonOutput.textContent = meanPoisson.toFixed(getDecimalPlaces());
+            variancePoissonOutput.textContent = variancePoisson.toFixed(getDecimalPlaces());
+        }
+
+
+        function updateDecimalPlaces() {
+            const decimalPlaces = getDecimalPlaces();
+            const meanOutput = document.getElementById('mean');
+            const varianceOutput = document.getElementById('variance');
+
+            meanOutput.textContent = parseFloat(meanOutput.textContent).toFixed(decimalPlaces);
+            varianceOutput.textContent = parseFloat(varianceOutput.textContent).toFixed(decimalPlaces);
+
+            // Пересчитываем данные перед обновлением таблицы
+            const nInput = document.getElementById('n');
+            const pInput = document.getElementById('p');
+            const lambdaInput = document.getElementById('lambda');
+
+            const n = parseInt(nInput.value);
+            const p = parseFloat(pInput.value);
+
+            const lambda = n * p;
+            lambdaInput.value = lambda.toFixed(2);
+
+            const binomialData = calculateBinomialDistribution(n, p);
+            const poissonData = generatePoissonData(lambda, n);
+
+            updateDistributionTable(binomialData, poissonData);
+        }
+
+        function updateDistributionTable(binomialData, poissonData) {
+            const tableBody = document.getElementById('distribution-table-body');
+            tableBody.innerHTML = '';
+
+            const decimalPlaces = getDecimalPlaces();
+
+            for (let i = 0; i < binomialData.length; i++) {
+                const newRow = document.createElement('tr');
+                const xCell = document.createElement('td');
+                const binomialProbCell = document.createElement('td');
+                const poissonProbCell = document.createElement('td');
+
+                xCell.textContent = binomialData[i].x;
+                binomialProbCell.textContent = binomialData[i].y.toFixed(decimalPlaces);
+                poissonProbCell.textContent = poissonData[i].y.toFixed(decimalPlaces);
+
+                newRow.appendChild(xCell);
+                newRow.appendChild(binomialProbCell);
+                newRow.appendChild(poissonProbCell);
+
+                tableBody.appendChild(newRow);
+            }
+
+            const binomialProbabilityOutput = document.getElementById('binomial-probability');
+            const poissonProbabilityOutput = document.getElementById('poisson-probability');
+
+            binomialProbabilityOutput.textContent = binomialData[binomialData.length - 1].y.toFixed(decimalPlaces);
+            poissonProbabilityOutput.textContent = poissonData[poissonData.length - 1].y.toFixed(decimalPlaces);
+        }
+    </script>
+</body>
+
+</html>
