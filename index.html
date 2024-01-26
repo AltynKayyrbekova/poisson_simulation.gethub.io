@@ -329,7 +329,7 @@
 
         function getDecimalPlaces() {
             const decimalPlacesInput = document.getElementById('decimal-places');
-            return parseInt(decimalPlacesInput.value) || 4;
+            return parseInt(decimalPlacesInput.value) || 3;
         }
 
         function calculateMean(binomialData) {
@@ -399,8 +399,8 @@
                 const poissonProbCell = document.createElement('td');
 
                 xCell.textContent = binomialData[i].x;
-                binomialProbCell.textContent = binomialData[i].y.toFixed(decimalPlaces);
-                poissonProbCell.textContent = poissonData[i].y.toFixed(decimalPlaces);
+                binomialProbCell.textContent = binomialData[i].y.toExponential(decimalPlaces);
+                poissonProbCell.textContent = poissonData[i].y.toExponential(decimalPlaces);
 
                 newRow.appendChild(xCell);
                 newRow.appendChild(binomialProbCell);
